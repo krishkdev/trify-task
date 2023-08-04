@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Map, Marker } from "pigeon-maps";
+import { Map, Marker, Overlay } from "pigeon-maps";
 import Modal from "react-modal";
-
+import "./App.css";
 const customStyles = {
   content: {
     top: "50%",
@@ -18,7 +18,7 @@ const stations = [
     id: 1,
     latitute: 13.06801209460255,
     longitude: 80.25190234073149,
-    battery_count: 3,
+
     details: {
       name: "EVS-1, Nungambakkam",
       batteries: 2,
@@ -29,7 +29,7 @@ const stations = [
     id: 2,
     latitute: 13.045609615502588,
     longitude: 80.24779077921903,
-    battery_count: 0,
+
     details: {
       name: "EVS-2, Teynampet",
       batteries: 6,
@@ -40,7 +40,7 @@ const stations = [
     id: 3,
     latitute: 13.041493724404843,
     longitude: 80.232683837241,
-    battery_count: 1,
+
     details: {
       name: "EVS-3, TNagar",
       batteries: 0,
@@ -51,7 +51,7 @@ const stations = [
     id: 4,
     latitute: 13.018904876914265,
     longitude: 80.27002887517634,
-    battery_count: 4,
+
     details: {
       name: "EVS-4, RA puram",
       batteries: 0,
@@ -62,7 +62,7 @@ const stations = [
     id: 5,
     latitute: 13.025529252365498,
     longitude: 80.22965843136527,
-    battery_count: 13,
+
     details: {
       name: "EVS-5, Saidapet",
       batteries: 0,
@@ -74,10 +74,15 @@ const stations = [
 function App() {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [modalData, setModalData] = useState(null);
+  const [hideEmptyEVS, setHideEmptyEVS] = useState(false);
 
-  const setModalIsOpenToTrue = (details) => {
-    setModalIsOpen(true);
-  };
+  function showEvs() {
+    setHideEmptyEVS(false);
+  }
+
+  function hideEvs() {
+    setHideEmptyEVS(true);
+  }
 
   const setModalIsOpenToFalse = () => {
     setModalIsOpen(false);
@@ -107,23 +112,48 @@ function App() {
 
   return (
     <div>
-      <Map height={1000} defaultCenter={[13.04, 80.2]} defaultZoom={12}>
-        {stations.map((coords) => (
-          <Marker
-            key={coords.id}
-            width={50}
-            anchor={[coords.latitute, coords.longitude]}
-            onClick={() => {
-              setModalData(coords.details);
-              setModalIsOpen(true);
-            }}
-          />
-        ))}
+      <Map height={800} defaultCenter={[13.04, 80.2]} defaultZoom={12}>
+        {hideEmptyEVS
+          ? stations
+              .filter((f) => f.details.batteries !== 0)
+              .map((coords) => (
+                <Marker
+                  key={coords.id}
+                  width={50}
+                  anchor={[coords.latitute, coords.longitude]}
+                  onClick={() => {
+                    setModalData(coords.details);
+                    setModalIsOpen(true);
+                  }}
+                />
+              ))
+          : stations.map((coords) => (
+              <Marker
+                key={coords.id}
+                width={50}
+                anchor={[coords.latitute, coords.longitude]}
+                onClick={() => {
+                  setModalData(coords.details);
+                  setModalIsOpen(true);
+                }}
+              />
+            ))}
       </Map>
       <Modal isOpen={modalIsOpen} style={customStyles}>
         <button onClick={setModalIsOpenToFalse}>x</button>
         <PlaceList />
       </Modal>
+      <div className="showhide">
+        {!hideEmptyEVS ? (
+          <button className="toggler hide" onClick={hideEvs}>
+            Hide
+          </button>
+        ) : (
+          <button className="toggler show" onClick={showEvs}>
+            Show
+          </button>
+        )}
+      </div>
     </div>
   );
 }
