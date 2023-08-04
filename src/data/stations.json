@@ -1,0 +1,17 @@
+[
+  {
+    "latitute": 13.9,
+    "longitude": 67.8,
+    "battery_count": 3
+  },
+  {
+    "latitute": 14.9,
+    "longitude": 66.8,
+    "battery_count": 0
+  },
+  {
+    "latitute": 15.9,
+    "longitude": 65.8,
+    "battery_count": 1
+  }
+]
